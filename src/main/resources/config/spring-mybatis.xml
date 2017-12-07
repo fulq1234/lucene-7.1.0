@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://mybatis.org/schema/mybatis-spring 
+        http://mybatis.org/schema/mybatis-spring.xsd">	
+   
+   <!-- 参数配置文件 -->
+   <context:property-placeholder location="classpath:config/config.properties"/>
+
+   <!-- 配置数据库数据源 -->
+   <bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">   
+		<!-- 数据库连接池别名 -->
+		<property name="alias" value="${proxool.alias}" />
+		<!-- 数据库连接用户名密码 -->
+		<property name="delegateProperties" value="user=${jdbc.userName},password=${jdbc.password}" />
+		<!-- 数据库驱动 -->
+		<property name="driver" value="${jdbc.driverClassName}" />
+		<!-- 数据库连接字符串 -->
+		<property name="driverUrl" value="${jdbc.url}" />
+		<!-- 必须在这里也设置user和password，但是 proxool却不使用它，或许是个bug-->
+		<property name="user" value="${jdbc.userName}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 一个线程持有一个连接的最长时间(默认5分钟，单位毫秒)，管这个连接是否处于 active 状态，到达时间就会被清除掉。 -->
+		<property name="maximumActiveTime" value="${proxool.maximumActiveTime}" />
+		<!-- 最大连接数(默认5个),超过了这个连接数,再有请求时,就排在队列中等候,最大的等待请求数由maximum-new-connections决定 -->
+		<property name="maximumConnectionCount" value="${proxool.maximumConnectionCount}" />
+		<!-- 最小连接数(默认2个) -->
+		<property name="minimumConnectionCount" value="${proxool.minimumConnectionCount}" />
+		<!-- 自动侦测各个连接状态的时间间隔(毫秒),侦测到空闲的连接就马上回收,超时的销毁 默认30秒-->
+		<property name="houseKeepingSleepTime" value="${proxool.houseKeepingSleepTime}" />
+		<!-- 没有空闲连接可以分配而在队列中等候的最大请求数,超过这个请求数的用户连接就不会被接受 -->
+		<property name="simultaneousBuildThrottle" value="${proxool.simultaneousBuildThrottle}" />
+		<!-- 最少保持的空闲连接数(默认2个) -->
+		<property name="prototypeCount" value="${proxool.prototypeCount}" />
+		<!-- 在使用之前测试 -->
+		<property name="testBeforeUse" value="${proxool.testBeforeUse}" />
+		<!-- 用于保持连接的测试语句 -->
+		<property name="houseKeepingTestSql" value="${proxool.houseKeepingTestSql}" />
+		<!-- 如果为true,那么每个被执行的SQL语句将会在执行期被log记录(DEBUG LEVEL) -->
+		<property name="trace" value="${proxool.trace}" />	
+   </bean>
+   
+   <!-- 配置sqlSessionFactory对象 -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+   		<!-- 注入数据库连接池 -->
+   		<property name="dataSource" ref="dataSource"/>
+   		<!-- 配置mysql 全局配置文件,mybatis-config.xml -->
+   		<property name="configLocation" value="classpath:config/mybatis-config.xml"></property>
+   		<!-- 扫描entity包，使用别名,多个用;分开 -->
+   		<property name="typeAliasesPackage" value="classpath:com.ldgx.eshop.lucene.entity"/>
+   		<!-- 扫描sql配置文件：mapper需要的xml文件 -->
+   		<property name="mapperLocations" value="classpath:mapper/*.xml"/>
+   </bean>
+   
+   <!-- 用来扫描mapper接口  -->
+   <mybatis:scan base-package="com.ldgx.eshop.lucene.dao"/>
+   
+   
+   <!-- 配置spring的PlatformTransactionManager，名字为默认值 -->  
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>
+    
+     <!-- 开启事务控制的注解支持 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+   
+</beans>
