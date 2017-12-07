@@ -5,5 +5,6 @@
 
 lucene核心代码在
   com.ldgx.eshop.lucene.util.LuceneUtil
+  
 测试项目:
   com.ldgx.eshop.lucene.service.impl.GoodsServiceTest
