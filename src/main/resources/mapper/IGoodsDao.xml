@@ -3,6 +3,7 @@
 <mapper namespace="com.ldgx.eshop.lucene.dao.IGoodsDao">
 	
 	<select id="queryGoods" resultType="com.ldgx.eshop.lucene.entity.Goods">
-		select * from tbl_goods
+		select * from tbl_goods 
+		<if test="_parameter !=null and _parameter !=''">where name like #{_parameter}</if>
 	</select>
 </mapper>

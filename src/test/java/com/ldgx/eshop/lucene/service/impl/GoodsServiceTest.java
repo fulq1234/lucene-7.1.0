@@ -21,30 +21,22 @@ public class GoodsServiceTest {
 		
 	@Test
 	public void test() {
+		long oldl= System.currentTimeMillis();
 		List<Goods> list;
 		try {
-			list = goodsService.query("学生 备注",100);
-			
-
-			for(Goods goods :list) {
-				System.out.println("-----------------------------------------");
-				System.out.println("文章标题："+goods.getTitle());
-				System.out.println("文章地址：" + goods.getUrl());
-				System.out.println("文章内容：");
-				System.out.println(goods.getContent());
-				System.out.println("");
-			}
-			/*
-			StringBuffer sb = new StringBuffer();
+			//list = goodsService.query("%name%",100000);
+			list = goodsService.querylucene("name2");
 			for(int i =0;i<list.size();i++) {
-				Goods goods = list.get(i);
-				sb.append(goods.getName() + ",");
+				Goods good = list.get(i);
+				System.out.println(i +",name="+good.getName()+",remark="+good.getRemark());
 			}
-			System.out.println(sb.toString());*/
-			
+			System.out.println("size:"+list.size());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			long newl= System.currentTimeMillis();
+			System.out.println("共花费秒数:" + (newl - oldl));
 		}
 	}
 

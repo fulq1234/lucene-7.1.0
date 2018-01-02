@@ -18,20 +18,27 @@ public class GoodsService implements IGoodsService {
 	private IGoodsDao goodsDao;	
 	
 	@Override
-	public List<Goods> query(String name, int limit) throws Exception {
+	public List<Goods> querylucene(String name) throws Exception {
 		List<Goods> list = new ArrayList<Goods>();		
 		boolean docNum = LuceneUtil.ifExists();//lucene文件夹下面有没有文件
 		System.out.println("docNum="+docNum);
 		if(!docNum) {//如果没有文件
 			System.out.println("====dao query goods");
-			list = goodsDao.queryGoods();//从数据库总查出商品的所有记录
+			list = goodsDao.queryGoods(null);//从数据库总查出商品的所有记录
 			//保存数据到lucene中
 			LuceneUtil.createIndex(list);
 		}else {
 			System.out.println("====lucene query goods");
-			list = LuceneUtil.search(name, limit);//如果lucene有数据就从lucene中查
+			list = LuceneUtil.search(name);//如果lucene有数据就从lucene中查
 		}		
 	
+		return list;
+	}
+
+	@Override
+	public List<Goods> query(String name) throws Exception {
+		
+		List<Goods> list = goodsDao.queryGoods(name);//从数据库总查出商品的所有记录
 		return list;
 	}
 

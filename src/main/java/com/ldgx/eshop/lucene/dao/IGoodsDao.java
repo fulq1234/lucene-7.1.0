@@ -10,5 +10,5 @@ import com.ldgx.eshop.lucene.entity.Goods;
 @Mapper
 public interface IGoodsDao {
 
-	public List<Goods> queryGoods();
+	public List<Goods> queryGoods(String name);
 }

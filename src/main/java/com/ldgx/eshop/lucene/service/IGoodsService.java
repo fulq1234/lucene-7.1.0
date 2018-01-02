@@ -7,5 +7,19 @@ import com.ldgx.eshop.lucene.entity.Goods;
 
 public interface IGoodsService {
 	
-	public List<Goods> query(String name,int limit) throws Exception;
+	/**
+	 * lucene的全文检索查询
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Goods> querylucene(String name) throws Exception;
+	
+	/**
+	 * 常规的数据库查询
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Goods> query(String name) throws Exception;
 }

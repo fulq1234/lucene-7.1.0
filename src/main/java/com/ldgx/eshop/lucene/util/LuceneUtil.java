@@ -102,10 +102,12 @@ public class LuceneUtil {
         	 * 表中也可以有字段,往里面添加内容之后可以根据字段去匹配查询
              * 下面创建的doc对象中添加了三个字段，分别为name,sex,dosomething,
 			 */
+			Document doc = null;
+			
 			//3.保存信息
 			for(Goods goods : list) {
 				//Document代表是一条数据，Field代表数据中的一个属性，一个Document中有多个Field
-				Document doc = new Document();
+				doc = new Document();
 
 				/*			 * 	
 				 * 用户String类型的字段的存储，StringField是只索引不分词
@@ -115,24 +117,37 @@ public class LuceneUtil {
 				 * Store.NO 不保存，可以查询，不可打印内容，由于不保存内容可以节省空间
 				 * Store.COMPRESS 压缩保存 可以查询 可以打印内容 可以节省生成索引文件的空间
 				 */	
+				//4.为Document添加field
 				doc.add(new Field("id", goods.getId() + "", TextField.TYPE_STORED));
-				doc.add(new Field("title", goods.getTitle(), TextField.TYPE_STORED));
-				doc.add(new Field("content", goods.getContent(), TextField.TYPE_STORED));
-				doc.add(new Field("tag", goods.getTag(), TextField.TYPE_STORED));
-				doc.add(new Field("url", goods.getUrl(), TextField.TYPE_STORED));
+				doc.add(new Field("name", goods.getName(), TextField.TYPE_STORED));
+				String remark = goods.getRemark();
+				if(remark == null) {
+					remark = "";
+				}
+				doc.add(new Field("remark", remark, TextField.TYPE_NOT_STORED));
 						
 				
 				
 				
+				//5.通过IndexWriter添加文档到索引中
 				writer.addDocument(doc);//添加文档
 			}
 			
-			writer.close();//indexer创建完索引后如果没有关闭（提交）导致索引没有完整创建，就会导致搜索报错
-			directory.close();
+			//writer.close();//indexer创建完索引后如果没有关闭（提交）导致索引没有完整创建，就会导致搜索报错
+			//directory.close();
 			
 		}catch(IOException e) {
 			e.printStackTrace();
 		}finally {
+			//6.关闭writer
+			if(writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			
 		}
 	}
@@ -143,7 +158,7 @@ public class LuceneUtil {
 	 * @param limit:最多显示几条数据
 	 * @return
 	 */
-	public static List<Goods> search(String keyWord,int limit){
+	public static List<Goods> search(String keyWord){
 		List<Goods> list = new ArrayList<Goods>();
 		
 		try {
@@ -161,7 +176,7 @@ public class LuceneUtil {
 			
 			// 简单的查询，创建Query表示搜索域为content包含keyWord的文档
 			//Query query = new QueryParser("content", analyzer).parse(keyWord);
-			String[] fields = {"title", "content", "tag"};
+			String[] fields = {"id", "name", "remark"};
 			// MUST 表示and，MUST_NOT 表示not ，SHOULD表示or
 			BooleanClause.Occur[] clauses = {BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};
 			// MultiFieldQueryParser表示多个域解析， 同时可以解析含空格的字符串，如果我们搜索"上海 中国" 
@@ -182,7 +197,7 @@ public class LuceneUtil {
 			{
 				// 7、根据searcher和ScoreDoc对象获取具体的Document对象
 				Document document = indexSearcher.doc(scoreDoc.doc);
-				String content = document.get("content");
+				String remark = document.get("remark");
 				//TokenStream tokenStream = new SimpleAnalyzer().tokenStream("content", new StringReader(content));
 				//TokenSources.getTokenStream("content", tvFields, content, analyzer, 100);
 				//TokenStream tokenStream = TokenSources.getAnyTokenStream(indexSearcher.getIndexReader(), scoreDoc.doc, "content", document, analyzer);
@@ -195,9 +210,11 @@ public class LuceneUtil {
 				System.out.println("");*/
 				// 8、根据Document对象获取需要的值
 				Goods goods = new Goods();
-				goods.setTitle(document.get("title"));
-				goods.setUrl(document.get("url"));
-				goods.setContent(highlighter.getBestFragment(analyzer, "content", content));
+				goods.setName(document.get("name"));
+				if(remark == null) {
+					remark = "";
+				}
+				goods.setRemark(highlighter.getBestFragment(analyzer, "remark", remark));
 				list.add(goods);
 			}
 			
