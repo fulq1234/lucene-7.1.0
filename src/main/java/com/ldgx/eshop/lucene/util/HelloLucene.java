@@ -27,7 +27,7 @@ import org.apache.lucene.store.FSDirectory;
 public class HelloLucene {
 
 	/**
-	 * ��������
+	 * 创建索引
 	 * @throws IOException 
 	 */
 	public void index(){
@@ -36,32 +36,32 @@ public class HelloLucene {
 		IndexWriter writer = null;
 		try {
 			
-			//1.����Directory
-			//Directory directory = new RAMDirectory();//�ڴ���
-			Directory directory = FSDirectory.open(Paths.get("E:/lucene-db"));//������Ӳ����
-			//2.����IndexWriter
+			//1.创建Directory
+			//Directory directory = new RAMDirectory();//建立在内存中
+			Directory directory = FSDirectory.open(Paths.get("E:/lucene-db/i1"));//创建在硬盘上
+			//2.创建IndexWriter
 			Analyzer analyzer = new StandardAnalyzer();
 			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
 			
 			writer = new IndexWriter(directory, iwc);
 			
-			//3.����Document����
+			//3.创建Document对象
 			Document doc = null;	
 			
-			//4.ΪDocument���field
-			File f = new File("E:/BaiduNetdiskDownload/jwtc/story/��Խ");
+			//4.为Document创建field
+			File f = new File("E:/BaiduNetdiskDownload/jwtc/穿越");
 			for(File file : f.listFiles()) {
 				System.out.println(file.getName() + ":" + file.getAbsolutePath());
 				doc = new Document();
 				
-				String content = FileUtils.readFileToString(file);
-				System.out.println(content);
+				//String content = FileUtils.readFileToString(file);
+				//System.out.println(content);
 				
-				//TextField.TYPE_NOT_STORED:�������ִʲ�����(Indexed, tokenized, not stored)
-				doc.add(new Field("content",new FileReader(file),TextField.TYPE_NOT_STORED));//�ļ�����
-				doc.add(new Field("filename",file.getName(),TextField.TYPE_STORED));//�ļ�����
-				doc.add(new Field("path",file.getAbsolutePath(),TextField.TYPE_STORED));//�ļ�·��
-				//5.ͨ��IndexWriter����ĵ���������
+				//TextField.TYPE_NOT_STORED(Indexed, tokenized, not stored)
+				doc.add(new Field("content",new FileReader(file),TextField.TYPE_NOT_STORED));
+				doc.add(new Field("filename",file.getName(),TextField.TYPE_STORED));
+				doc.add(new Field("path",file.getAbsolutePath(),TextField.TYPE_STORED));
+				//5.ͨ通过IndexWriter添加文档到索引中
 				writer.addDocument(doc);
 			}
 			
@@ -102,7 +102,7 @@ public class HelloLucene {
 			//����parser��ȷ�������ļ�������,param1:��������
 			QueryParser parser = new QueryParser("content",new StandardAnalyzer());
 			//����Query,������Ϊcontent�а�������Խ�����ĵ�
-			Query query = parser.parse("��Խ");
+			Query query = parser.parse("穿越");
 			
 			//5.����searcher�������ҷ���TopDocs
 			//search(param1,param2) param2:��ʾ����

@@ -29,26 +29,18 @@ public class IndexUtil {
 
 	private String[] ids = {"1","2","3","4","5","6"};
 	private String[] emails = {"aa@itat.org","bb@itat.org","cc@itat.org","dd@itat.org","ee@itat.org","gg@itat.org"};
-	private String[] content = {
-			"������æ��һҹ�����ڴ��ϴ��ȴ���á��ص�һ�����죬С�������ֱ�����ű����������������۾�֧��������һ������Ȼ�����Լ������Ѽ����������Ƚ�����˽���һ������ɫְҵװ��ѩ�׵�����ֱͦͦ����һ�ų��ż��˿ɰ�ƻ�������Դ����������������˳���֮�֣�������̧����ȥ��������ԭ��ҡҡ��׹�����ϰ�ľ���Ϻ�Ȼ����һ�������׵�Ь����",
-			"��Ƚ�������ȥ�μӱ�װ��ᱻ�˼ҵ���δ�����˸��ϳ���Ҳ�ò�������ô������,����Ƚһ���Ȱ���һֻЬ�ߵ������Լ�������һ����������ᣬ�Ҷ�Ҫ���ˣ��㲻֪����Щ���ͻ���һ������ò��Ȼ��������Ƥ������Լ��������ˡ������ҵ��ȣ��ҵ�������������ô���ҵ����������ڵ��������˵ģ�Ҳ��������������С������ʲô�ˣ�",
-			"��˵�ţ��ֺݺ�������ͷ�Ե���ż�������Ĵ������̷ɳ�����Զ������һ��ŭ����׼ȷ����������Ͱ������ûһ���ö������������淭����������һ��שͷ��������ͳ�һ���ƶ�Ӳ��������������Ƚ�Ĵ��ϣ������㣬���˾�֪��ʲô��û�����ֻ�и����ˡ�",
-			"��Щ������������ֲ�Ƭֻ�Ǵ����������������ֱ����꣬�����������硣",
-			"����Ƚ���ߣ����������ϵ��ĵ���ȥ�ˡ�������̾�˿�����Ҳû����˯�⣬�о��������Ѿ����϶������Լ��������Ӻ���ǰһ����ÿ������һ�ߵĽ���ʳ�����ᣬ������Ƚ�Ǿ�����Ҫ��ȥ����ҵ���������˸���ƹ�˾ʵϰ��ȴ��ÿ��������죬ƽ��ÿ����ٵ�һ˫�߸�Ь�������������������𣬱����˼������´���������Ƚ��ߣ�����һ�𿴡�����˭��ûע�⵽�����Եĵ�Դ��ͷ�ϲ�ʱð���ĵ��𻨡����ݵ�÷����Ϊ��һֻĸ������ɧ������Ƚ�̲�ס�������������������÷��Ҳ߯���ˣ��������ˡ�",
-			"��������������ס���ۿ�����һȭ����ʾ���ԱߵĻ��䣬�����ü������죬ͻȻһ�������������������ͬʱʧȥ����ʶ��"
-			
-	};
+	private String[] content = {"hello world aa@itat.org","come on bb@itat.org","jiazhang cc@itat.org","fale dd@itat.org","qita ee@itat.org","xuexiao gg@itat.org"};
 	private Date[] dates = null;
 	
 	private int[] attachs = {2,3,1,4,5,5};
-	private String[] names = {"����","����","����","����","����","����"};
+	private String[] names = {"aa","bb","cc","dd","ee","gg"};
 
 	private Directory directory = null;
 	
 	private Map<String,Float> scores = new HashMap<String,Float>();
 	
 	/**
-	 * ���캯��,����Directory
+	 * 构造函数，初始化Directory
 	 */
 	public IndexUtil() {
 		try {
@@ -79,11 +71,11 @@ public class IndexUtil {
 	}
 	
 	/**
-	 * ��������
+	 * 建立索引
 	 */
 	public void index() {
 		
-		//2.����IndexWriter
+		//2.创建IndexWriter
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()));
@@ -126,20 +118,21 @@ public class IndexUtil {
 	}
 	
 	/**
-	 * ��ѯ����
+	 * 查询
 	 */
 	public void query() {
-		//2.����IndexReader
+		//2.通过IndexReader,可以有效获取到文档的数量
 		try {
 			IndexReader reader = DirectoryReader.open(directory);
-			int maxDoc = reader.maxDoc();//��������
+		
+			int maxDoc = reader.maxDoc();
 			System.out.println("maxDoc:" + maxDoc);
 			System.out.println("numDoc:" + reader.numDocs());
 			System.out.println("deleteDocs:" + reader.numDeletedDocs());
 			
 			IndexSearcher searcher = new IndexSearcher(reader);
 			
-			TermQuery query = new TermQuery(new Term("content", "��"));
+			TermQuery query = new TermQuery(new Term("content", "aa"));
 			
 			TopDocs tds = searcher.search(query, 10);
 			for(ScoreDoc sd : tds.scoreDocs) {
@@ -155,31 +148,33 @@ public class IndexUtil {
 	}
 	
 	/**
-	 * �ָ�ɾ��������
-	 */
+	 * 恢复被删除的文档
+	 
 	public void undelete() {
-		//ʹ��IndexReader���лָ�
+		//IndexReader
 		try {
 			IndexReader reader =  DirectoryReader.open(directory);
+			
 			reader.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-	}
+	}*/
 	
 	/**
-	 * ɾ������
+	 * 删除
 	 */
 	public void delete() {
 		IndexWriter writer = null;
 		try {
 			writer = new IndexWriter(directory, new IndexWriterConfig(new StandardAnalyzer()));
 			
-			//������һ��ѡ�������һ��Query,Ҳ������һ�� term,term��һ����ȷ���ҵ�ֵ
-			//��ʱ���ĵ���������ȫɾ�������Դ洢��һ������վ�еģ����Իָ�
-			writer.deleteDocuments(new Term("id","1"));
+			//参数是一个选项，参数可以是query,term.term是一个精确查找的值
+			//此时删除的文档并不会被完全删除，而是放在回收站中
+			writer.deleteDocuments(new Term("id","1"));			
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -197,7 +192,7 @@ public class IndexUtil {
 	}
 	
 	/**
-	 * ǿ��ɾ��
+	 * 强制删除
 	 */
 	public void forceDelete() {
 		IndexWriter writer = null;
